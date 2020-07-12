@@ -21,6 +21,10 @@ def send_text(message):
     elif message.text.lower() == 'пока':
         bot.send_message(message.chat.id, 'Прощай, создатель')
 
+@bot.message_handler(content_types=['photo'])
+def send_text(message):
+    bot.send_message(message.chat.id, 'красиво!')
+
 
 
 @server.route('/' + TOKEN, methods=['POST'])
