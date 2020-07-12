@@ -1,23 +1,26 @@
 import os
-
 from flask import Flask, request
-
 import telebot
 
 TOKEN = '1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo'
-bot = telebot.TeleBot(TOKEN)
+# bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
 print("here")
 
+bot = telebot.TeleBot('1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo')
+
 @bot.message_handler(commands=['start'])
-def start(message):
-    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+def start_message(message):
+    bot.send_message(message.chat.id, 'Привет, ты написал мне /start')
 
+@bot.message_handler(content_types=['text'])
+def send_text(message):
+    print(message.text.lower() + " is revieved")
+    if message.text.lower() == 'привет':
+        bot.send_message(message.chat.id, 'Привет, мой создатель')
+    elif message.text.lower() == 'пока':
+        bot.send_message(message.chat.id, 'Прощай, создатель')
 
-@bot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    print("get message.text")
-    bot.reply_to(message, message.text)
 
 
 @server.route('/' + TOKEN, methods=['POST'])
