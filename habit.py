@@ -56,7 +56,7 @@ def process_change_motiv_step(message):
 def start_message(message):
     if len(tasks)!=0:
         m = bot.send_message(message.chat.id, "Please, choose habit:")
-        markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+        markup = telebot.types.ReplyKeyboardMarkup()
         for task in tasks:
             bot.send_message(message.chat.id, "Here is '{}'".format(task.name))
             # print(task.name)
