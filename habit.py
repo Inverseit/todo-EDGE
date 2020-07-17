@@ -48,7 +48,7 @@ def process_motiv_step(message):
         m = bot.send_message(message.chat.id, 'Please enter new motivation text')
         bot.register_next_step_handler(m, process_change_motiv_step)
 def process_change_motiv_step(message):
-    tasks[-1] = message.text
+    tasks[-1].motivation = message.text
     m = bot.send_message(message.chat.id, "Done! Current motivation message is '{}'".format(tasks[-1].motivation))
 
 
