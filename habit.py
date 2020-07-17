@@ -18,7 +18,7 @@ def send_text(message):
     print(message.text.lower() + " is revieved")
     if message.text.lower() == 'привет':
         msg = bot.send_message(message.chat.id, 'Привет, мой создатель')
-        bot.register_next_step_handler(msg, process_name_step)
+        bot.register_next_step_handler(message, process_name_step)
     elif message.text.lower() == 'пока':
         bot.send_message(message.chat.id, 'Прощай, создатель')
     def process_name_step(message):
