@@ -55,15 +55,13 @@ def process_change_motiv_step(message):
 @bot.message_handler(commands=['show'])
 def start_message(message):
     if len(tasks)!=0:
-        m = bot.send_message(message.chat.id, "Please, choose habit:")
         markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
         for task in tasks:
-            bot.send_message(message.chat.id, "Here is '{}'".format(task.name))
-            # print(task.name)
             markup.add(task.name)
-        bot.register_next_step_handler(m, process_show_step, reply_markup=markup)
+        m = bot.send_message(message.chat.id, "Please, choose habit:", reply_markup=markup)
+        bot.register_next_step_handler(m, process_show_step)
     else:
-        bot.send_message(message.chat.id, "😱 You didn't added any habits, Please add habits by entering \start")
+        bot.send_message(message.chat.id, "😱 You didn't added any habits, Please add habits by entering \add")
 def process_show_step(message):
     print("nts")
 
