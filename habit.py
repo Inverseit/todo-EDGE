@@ -54,8 +54,14 @@ def process_change_motiv_step(message):
 
 @bot.message_handler(commands=['show'])
 def start_message(message):
-    m = bot.send_message(message.chat.id, 'Here you are!')
-    bot.register_next_step_handler(m, process_show_step)
+    m = bot.send_message(message.chat.id, "Please, choose habit:")
+    task_names_list = []
+    if len(tasks)!=0:
+        for task in tasks:
+            task_names_list.append(task.name)
+        bot.register_next_step_handler(m, process_show_step, reply_markup=generate_markup(task_names_list))
+    else:
+        bot.send_message(message.chat.id, "Please add habits by entering \start")
 def process_show_step(message):
     print("nts")
 
