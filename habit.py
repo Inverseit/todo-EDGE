@@ -1,12 +1,26 @@
 import os
 from flask import Flask, request
 import telebot
+import myutils
 
 TOKEN = '1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo'
 # bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
 
+class Task:
+  def __init__(self, name, cid, number_of_time, motivation):
+    self.name = name
+    self.cid = cid
+    self.number_of_time = number_of_time
+    self.motivation = motivation
+
 tasks = []
+
+def generate_markup(answers):
+    markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+    for item in answers:
+        markup.add(item)
+    return markup
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -20,8 +34,26 @@ def start_message(message):
     m = bot.send_message(message.chat.id, 'Hello, what habit you want to track with me?')
     bot.register_next_step_handler(m, process_habit_step)
 def process_habit_step(message):
-    bot.send_message(message.chat.id, "Adding {} to your list".format(message.text))
-    tasks.append(message.text)
+    bot.send_message(message.chat.id, "Adding '{}' habit to your list".format(message.text))
+    new_task = Task(message.text, message.chat_id,0,"Just do it")
+    tasks.append(new_task)
+    m = bot.send_message(message.chat.id, "Done! Current motivation message is '{}'. Do you want edit it?".format(new_task.motivation), reply_markup=generate_markup(["Yes", "No"]))
+    bot.register_next_step_handler(m, process_motiv_step)
+def process_motiv_step(message):
+    if message.text == "Yes":
+        m = bot.send_message(message.chat.id, 'Please enter new motivation text')
+        bot.register_next_step_handler(m, process_change_motiv_step)
+def process_change_motiv_step(message):
+    tasks[-1] = message.text
+    m = bot.send_message(message.chat.id, "Done! Current motivation message is '{}'".format(tasks[-1].motivation))
+
+
+@bot.message_handler(commands=['show'])
+def start_message(message):
+    m = bot.send_message(message.chat.id, 'Here you are!')
+    bot.register_next_step_handler(m, process_show_step)
+def process_show_step(message):
+    print("nts")
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
