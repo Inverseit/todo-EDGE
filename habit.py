@@ -5,7 +5,8 @@ import telebot
 TOKEN = '1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo'
 # bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
-print("here")
+
+tasks = []
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -13,16 +14,25 @@ bot = telebot.TeleBot(TOKEN)
 def start_message(message):
     bot.send_message(message.chat.id, 'Привет, ты написал мне /start')
 
+
+@bot.message_handler(commands=['add'])
+def start_message(message):
+    m = bot.send_message(message.chat.id, 'Hello, what habit you want to track with me?')
+    bot.register_next_step_handler(m, process_habit_step)
+def process_habit_step(message):
+    bot.send_message(message.chat.id, "Adding {} to your list".format(message.text))
+    tasks.append(message.text)
+
 @bot.message_handler(content_types=['text'])
 def send_text(message):
     print(message.text.lower() + " is revieved")
     if message.text.lower() == 'привет':
-        msg = bot.send_message(message.chat.id, 'Привет, мой создатель')
+        msg = bot.send_message(message.chat.id, '')
         bot.register_next_step_handler(msg, process_name_step)
     elif message.text.lower() == 'пока':
         bot.send_message(message.chat.id, 'Прощай, создатель')
 def process_name_step(message):
-    bot.send_message(message.chat.id, 'Проверяю следующие возможности')
+    bot.send_message(message.chat.id, "До")
 
 @bot.message_handler(content_types=['photo'])
 def send_text(message):
