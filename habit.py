@@ -19,7 +19,7 @@ class Task:
 tasks = []
 
 def generate_markup(list):
-    markup = telebot.types.ReplyKeyboardRemove()
+    markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
     for item in list:
         markup.add(item)
     return markup
@@ -56,12 +56,12 @@ def process_change_motiv_step(message):
 def start_message(message):
     if len(tasks)!=0:
         m = bot.send_message(message.chat.id, "Please, choose habit:")
-        markup = telebot.types.ReplyKeyboardRemove()
+        markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
         for task in tasks:
             bot.send_message(message.chat.id, "Here is '{}'".format(task.name))
             # print(task.name)
-            markup.add(task.name)
-        bot.register_next_step_handler(m, process_show_step, reply_markup=markup)
+            markup.append(task.name)
+        bot.register_next_step_handler(m, process_show_step, reply_markup=generate_markup(task_names_list))
     else:
         bot.send_message(message.chat.id, "😱Please add habits by entering \start")
 def process_show_step(message):
