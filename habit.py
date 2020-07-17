@@ -49,7 +49,7 @@ def process_motiv_step(message):
         bot.register_next_step_handler(m, process_change_motiv_step)
 def process_change_motiv_step(message):
     tasks[-1].motivation = message.text
-    m = bot.send_message(message.chat.id, "Done! Current motivation message is '{}'".format(tasks[-1].motivation))
+    m = bot.send_message(message.chat.id, "Done! Current motivation message is changed to **'{}'**".format(tasks[-1].motivation))
 
 
 @bot.message_handler(commands=['show'])
