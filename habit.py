@@ -13,6 +13,8 @@ class Task:
     self.cid = cid
     self.number_of_time = number_of_time
     self.motivation = motivation
+  def print_task(self):
+    print("Name {}, cid {}, n is {} and motiv: {}".format(self.name, self.cid, self.number_of_time, self.motivation))
 
 tasks = []
 
@@ -37,6 +39,7 @@ def process_habit_step(message):
     bot.send_message(message.chat.id, "Adding '{}' habit to your list".format(message.text))
     new_task = Task(message.text, message.chat_id,0,"Just do it")
     tasks.append(new_task)
+    new_task.print_task()
     m = bot.send_message(message.chat.id, "Done! Current motivation message is '{}'. Do you want edit it?".format(new_task.motivation), reply_markup=generate_markup(["Yes", "No"]))
     bot.register_next_step_handler(m, process_motiv_step)
 def process_motiv_step(message):
