@@ -19,7 +19,7 @@ class Task:
 tasks = []
 
 def generate_markup(list):
-    markup = telebot.types.InlineKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+    markup = telebot.types.InlineKeyboardMarkup()
     for item in list:
         markup.add(item)
     return markup
