@@ -58,6 +58,8 @@ def start_message(message):
         m = bot.send_message(message.chat.id, "Please, choose habit:")
         task_names_list = []
         for task in tasks:
+            bot.send_message(message.chat.id, "Here is '{}'".format(task.name))
+            # print(task.name)
             task_names_list.append(task.name)
         bot.register_next_step_handler(m, process_show_step, reply_markup=generate_markup(task_names_list))
     else:
