@@ -47,7 +47,7 @@ def makeKeyboard():
         icon = not_started_icon
         if value == DOING:
             icon = doing_icon
-        elif value == Done:
+        elif value == DONE:
             icon = done_icon
         markup.add(
             types.InlineKeyboardButton(text=key + icon, callback_data="['key', '{}']".format(key)),
