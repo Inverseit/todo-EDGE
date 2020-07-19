@@ -5,6 +5,7 @@ from flask import Flask, request
 import telebot
 types = telebot.types
 
+
 NOT_STARTED = 0
 DOING = 1
 DONE  = 2
@@ -29,7 +30,7 @@ def start_message(message):
 
 @bot.message_handler(commands=['help'])
 def start_message(message):
-    bot.send_message(message.chat.id, "In show menu \n {not_started_icon} is new tasks \n {doing_icon} is tasks in progress \n {done_icon} is finished task \n Press {crossIcon} to delete the task") # add some text
+    bot.send_message(message.chat.id, "In show menu \n {0} is new tasks \n {1} is tasks in progress \n {2} is finished task \n Press {3} to delete the task".format(not_started_icon, doing_icon, done_icon,crossIcon )) # add some text
 
 
 @bot.message_handler(commands=['add'])
