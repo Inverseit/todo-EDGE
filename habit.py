@@ -23,9 +23,9 @@ def makeKeyboard():
     markup = types.InlineKeyboardMarkup()
     for key, value in tasks.items():
         markup.add(types.InlineKeyboardButton(text=value,
-                                              callback_data="['value', '" + value + "', '" + key + "']"),
+                                              callback_data="['value', '" + str(value) + "', '" + str(key) + "']"),
         types.InlineKeyboardButton(text=crossIcon,
-                                   callback_data="['key', '" + key + "']"))
+                                   callback_data="['key', '" + str(key) + "']"))
     return markup
 
 @bot.message_handler(commands=['start'])
@@ -43,7 +43,8 @@ def process_habit_step(message):
         tasks[message.text] = NOT_STARTED
         bot.send_message(message.chat.id, "Done! We added a new task: '{}'".format(message.text))
     else:
-        bot.send_message(message.chat.id, "Sorry, you are already have task called '{}'".format(message.text))
+        m = bot.send_message(message.chat.id, "Sorry, you are already have task called '{}'".format(message.text))
+        bot.register_next_step_handler(m, start_message)
 
 @bot.message_handler(commands=['show'])
 def start_message(message):
