@@ -76,7 +76,7 @@ def handle_query(call):
         if tasks[keyFromCallBack] > DONE:
             tasks[keyFromCallBack] = DONE
         bot.edit_message_text(chat_id=call.message.chat.id,
-                              text="Here are the values of stringList",
+                              text="Your tasks",
                               message_id=call.message.message_id,
                               reply_markup=makeKeyboard(),
                               parse_mode='HTML')
@@ -85,7 +85,7 @@ def handle_query(call):
         keyFromCallBack = ast.literal_eval(call.data)[1]
         del tasks[keyFromCallBack]
         bot.edit_message_text(chat_id=call.message.chat.id,
-                              text="Here are the values of stringList",
+                              text="Your tasks",
                               message_id=call.message.message_id,
                               reply_markup=makeKeyboard(),
                               parse_mode='HTML')
