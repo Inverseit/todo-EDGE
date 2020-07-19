@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request
 import telebot
+types = telebot.types
 
 NOT_STARTED = 0
 DOING = 1
