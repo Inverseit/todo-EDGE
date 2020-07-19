@@ -56,7 +56,7 @@ def makeKeyboard():
         elif value == DONE:
             icon = done_icon
         markup.add(
-            types.InlineKeyboardButton(text=key +"     "+ icon, callback_data="['key', '{}']".format(key)),
+            types.InlineKeyboardButton(text=icon+key, callback_data="['key', '{}']".format(key)),
             types.InlineKeyboardButton(text=crossIcon,callback_data="['del', '{}']".format(key))
         )
     return markup
