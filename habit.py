@@ -1,69 +1,78 @@
 import os
 from flask import Flask, request
 import telebot
-import myutils
+
+NOT_STARTED = 0
+DOING = 1
+DONE  = 2
+
+crossIcon = u"\u274C"
+DoingIcon = "Doing"
+Done = "Done"
 
 TOKEN = '1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo'
-# bot = telebot.TeleBot(TOKEN)
+
 server = Flask(__name__)
 
-class Task:
-  def __init__(self, name, cid, number_of_time, motivation):
-    self.name = name
-    self.cid = cid
-    self.number_of_time = number_of_time
-    self.motivation = motivation
-  def print_task(self):
-    print("Name {0}, cid {1}, n is {2} and motiv: {3}".format(self.name, self.cid, self.number_of_time, self.motivation))
-
-tasks = []
-
-def generate_markup(list):
-    markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-    for item in list:
-        markup.add(item)
-    return markup
+tasks = {}
 
 bot = telebot.TeleBot(TOKEN)
 
+def makeKeyboard():
+    markup = types.InlineKeyboardMarkup()
+    for key, value in tasks.items():
+        markup.add(types.InlineKeyboardButton(text=value,
+                                              callback_data="['value', '" + value + "', '" + key + "']"),
+        types.InlineKeyboardButton(text=crossIcon,
+                                   callback_data="['key', '" + key + "']"))
+    return markup
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id, 'Привет, ты написал мне /start')
+    bot.send_message(message.chat.id, "Hey let's get started!") # add some text
 
 
 @bot.message_handler(commands=['add'])
 def start_message(message):
-    m = bot.send_message(message.chat.id, 'Hello, what habit you want to track with me?')
+    m = bot.send_message(message.chat.id, 'Hello, what task do you want to do today?')
     bot.register_next_step_handler(m, process_habit_step)
 def process_habit_step(message):
     bot.send_message(message.chat.id, "Adding '{}' habit to your list".format(message.text))
-    print(message)
-    new_task = Task(message.text, message.chat.id,0,"Just do it")
-    tasks.append(new_task)
-    new_task.print_task()
-    m = bot.send_message(message.chat.id, "Done! Current motivation message is '{}'. Do you want edit it?".format(new_task.motivation), reply_markup=generate_markup(["Yes", "No"]))
-    bot.register_next_step_handler(m, process_motiv_step)
-def process_motiv_step(message):
-    if message.text == "Yes":
-        m = bot.send_message(message.chat.id, 'Please enter new motivation text')
-        bot.register_next_step_handler(m, process_change_motiv_step)
-def process_change_motiv_step(message):
-    tasks[-1].motivation = message.text
-    m = bot.send_message(message.chat.id, "Done! Current motivation message is changed to **'{}'**".format(tasks[-1].motivation))
-
+    if meassage.text not in tasks.keys():
+        task[message.text] = NOT_STARTED
+        bot.send_message(message.chat.id, "Done! We added a new task: '{}'".format(message.text))
+    else:
+        bot.send_message(message.chat.id, "Sorry, you are already have task called '{}'".format(message.text))
 
 @bot.message_handler(commands=['show'])
 def start_message(message):
-    if len(tasks)!=0:
-        markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-        for task in tasks:
-            markup.add(task.name)
-        m = bot.send_message(message.chat.id, "Please, choose habit:", reply_markup=markup)
-        bot.register_next_step_handler(m, process_show_step)
+    if len(tasks.keys())==0:
+        bot.send_message(message.chat.id, "😱 You didn't added any tasks, please click to the /add")
     else:
-        bot.send_message(message.chat.id, "😱 You didn't added any habits, Please add habits by entering \add")
-def process_show_step(message):
-    print("nts")
+        bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboard())
+
+@bot.callback_query_handler(func=lambda call: True)
+def handle_query(call):
+
+    if (call.data.startswith("['value'")):
+        print(f"call.data : {call.data} , type : {type(call.data)}")
+        print(f"ast.literal_eval(call.data) : {ast.literal_eval(call.data)} , type : {type(ast.literal_eval(call.data))}")
+        valueFromCallBack = ast.literal_eval(call.data)[1]
+        keyFromCallBack = ast.literal_eval(call.data)[2]
+        bot.answer_callback_query(callback_query_id=call.id,
+                              show_alert=True,
+                              text="You Clicked " + valueFromCallBack + " and key is " + keyFromCallBack)
+
+    if (call.data.startswith("['key'")):
+        keyFromCallBack = ast.literal_eval(call.data)[1]
+        del stringList[keyFromCallBack]
+        bot.edit_message_text(chat_id=call.message.chat.id,
+                              text="Here are the values of stringList",
+                              message_id=call.message.message_id,
+                              reply_markup=makeKeyboard(),
+                              parse_mode='HTML')
+
+
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
@@ -76,41 +85,11 @@ def send_text(message):
 def process_name_step(message):
     bot.send_message(message.chat.id, "До")
 
+
+
 @bot.message_handler(content_types=['photo'])
 def send_text(message):
     bot.send_message(message.chat.id, 'красиво!')
-
-
-# @bot.message_handler(commands=['help', 'start'])
-# def send_welcome(message):
-#     msg = bot.reply_to(message, """\
-# Hi there, I am Example bot.
-# What's your name?
-# """)
-#     bot.register_next_step_handler(msg, process_name_step)
-  
-  
-# def process_name_step(message):
-#     try:
-#         chat_id = message.chat.id
-#         name = message.text
-#         user = User(name)
-#         user_dict[chat_id] = user
-#         msg = bot.reply_to(message, 'How old are you?')
-#         bot.register_next_step_handler(msg, process_age_step)
-#     except Exception as e:
-# bot.reply_to(message, 'oooops')
-
-
-
-
-
-
-
-
-
-
-
 
 
 @server.route('/' + TOKEN, methods=['POST'])
