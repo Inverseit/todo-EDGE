@@ -9,8 +9,8 @@ NOT_STARTED = 0
 DOING = 1
 DONE  = 2
 
-crossIcon =  u"\u274C"
-not_started_icon = "💤"
+crossIcon =  "❌"
+not_started_icon = "🆕"
 doing_icon = "🕗"
 done_icon = "✅"
 
@@ -25,9 +25,11 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id, "Hey let's get started!") # add some text
-    bot.send_message(message.chat.id, "<b>\\add<b> To add tasks to your list \n **\show** To see all your tasks  \n <b>\help</b> To understand how to use this bot", parse_mode="Markdown") # add some text
-    bot.send_message(message.chat.id, "<b>\\add<b> To add tasks to your list \n **\show** To see all your tasks  \n <b>\help</b> To understand how to use this bot", parse_mode="HTML")
+    bot.send_message(message.chat.id, "Hey let's get started! Type / to see availabe commands") # add some text
+
+@bot.message_handler(commands=['help'])
+def start_message(message):
+    bot.send_message(message.chat.id, "In show menu \n {not_started_icon} is new tasks \n {doing_icon} is tasks in progress \n {done_icon} is finished task \n Press {crossIcon} to delete the task") # add some text
 
 
 @bot.message_handler(commands=['add'])
