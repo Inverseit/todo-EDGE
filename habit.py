@@ -9,7 +9,8 @@ NOT_STARTED = 0
 DOING = 1
 DONE  = 2
 
-not_started_icon = u"\u274C"
+crossIcon =  u"\u274C"
+not_started_icon = "Not started"
 doing_icon = "Doing"
 done_icon = "Done"
 
