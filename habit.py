@@ -10,9 +10,9 @@ DOING = 1
 DONE  = 2
 
 crossIcon =  u"\u274C"
-not_started_icon = "Not started"
-doing_icon = "Doing"
-done_icon = "Done"
+not_started_icon = "💤"
+doing_icon = "🕗"
+done_icon = "✅"
 
 TOKEN = '1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo'
 
@@ -51,7 +51,7 @@ def makeKeyboard():
         elif value == DONE:
             icon = done_icon
         markup.add(
-            types.InlineKeyboardButton(text=key + icon, callback_data="['key', '{}']".format(key)),
+            types.InlineKeyboardButton(text=key +"     "+ icon, callback_data="['key', '{}']".format(key)),
             types.InlineKeyboardButton(text=crossIcon,callback_data="['del', '{}']".format(key))
         )
     return markup
