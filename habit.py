@@ -9,9 +9,9 @@ NOT_STARTED = 0
 DOING = 1
 DONE  = 2
 
-crossIcon = u"\u274C"
-DoingIcon = "Doing"
-Done = "Done"
+not_started_icon = u"\u274C"
+doing_icon = "Doing"
+done_icon = "Done"
 
 TOKEN = '1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo'
 
@@ -21,14 +21,6 @@ tasks = {}
 
 bot = telebot.TeleBot(TOKEN)
 
-def makeKeyboard():
-    markup = types.InlineKeyboardMarkup()
-    for key, value in tasks.items():
-        markup.add(types.InlineKeyboardButton(text=value,
-                                              callback_data="['value', '" + str(value) + "', '" + str(key) + "']"),
-        types.InlineKeyboardButton(text=crossIcon,
-                                   callback_data="['key', '" + str(key) + "']"))
-    return markup
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
@@ -48,6 +40,21 @@ def process_habit_step(message):
         m = bot.send_message(message.chat.id, "Sorry, you are already have task called '{}'".format(message.text))
         bot.register_next_step_handler(m, start_message)
 
+
+def makeKeyboard():
+    markup = types.InlineKeyboardMarkup()
+    for key, value in tasks.items():
+        icon = not_started_icon
+        if value == DOING:
+            icon = doing_icon
+        elif value == Done:
+            icon = done_icon
+        markup.add(
+            types.InlineKeyboardButton(text=key + icon, callback_data="['key', '{}']".format(key)),
+            types.InlineKeyboardButton(text=crossIcon,callback_data="['del', '{}']".format(key))
+        )
+    return markup
+
 @bot.message_handler(commands=['show'])
 def start_message(message):
     if len(tasks.keys())==0:
@@ -57,19 +64,20 @@ def start_message(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_query(call):
-
-    if (call.data.startswith("['value'")):
-        print(f"call.data : {call.data} , type : {type(call.data)}")
-        print(f"ast.literal_eval(call.data) : {ast.literal_eval(call.data)} , type : {type(ast.literal_eval(call.data))}")
-        valueFromCallBack = ast.literal_eval(call.data)[1]
-        keyFromCallBack = ast.literal_eval(call.data)[2]
-        bot.answer_callback_query(callback_query_id=call.id,
-                              show_alert=True,
-                              text="You Clicked " + valueFromCallBack + " and key is " + keyFromCallBack)
-
     if (call.data.startswith("['key'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
-        del stringList[keyFromCallBack]
+        tasks[keyFromCallBack] += 1
+        if tasks[keyFromCallBack] > DONE:
+            tasks[keyFromCallBack] = DONE
+        bot.edit_message_text(chat_id=call.message.chat.id,
+                              text="Here are the values of stringList",
+                              message_id=call.message.message_id,
+                              reply_markup=makeKeyboard(),
+                              parse_mode='HTML')
+
+    if (call.data.startswith("['del'")):
+        keyFromCallBack = ast.literal_eval(call.data)[1]
+        del tasks[keyFromCallBack]
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Here are the values of stringList",
                               message_id=call.message.message_id,
