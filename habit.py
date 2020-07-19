@@ -26,8 +26,8 @@ bot = telebot.TeleBot(TOKEN)
 @bot.message_handler(commands=['start'])
 def start_message(message):
     bot.send_message(message.chat.id, "Hey let's get started!") # add some text
-    bot.send_message(message.chat.id, repr("<b>\add</b>") + " To add tasks to your list \n <b>\show</b> To see all your tasks  \n <b>\help</b> To understand how to use this bot") # add some text
-
+    bot.send_message(message.chat.id, "<b>\\add<b> To add tasks to your list \n **\show** To see all your tasks  \n <b>\help</b> To understand how to use this bot", parse_mode="Markdown") # add some text
+    bot.send_message(message.chat.id, "<b>\\add<b> To add tasks to your list \n **\show** To see all your tasks  \n <b>\help</b> To understand how to use this bot", parse_mode="HTML")
 
 
 @bot.message_handler(commands=['add'])
