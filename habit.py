@@ -38,7 +38,7 @@ def start_message(message):
     bot.register_next_step_handler(m, process_habit_step)
 def process_habit_step(message):
     bot.send_message(message.chat.id, "Adding '{}' habit to your list".format(message.text))
-    if meassage.text not in tasks.keys():
+    if message.text not in tasks.keys():
         task[message.text] = NOT_STARTED
         bot.send_message(message.chat.id, "Done! We added a new task: '{}'".format(message.text))
     else:
