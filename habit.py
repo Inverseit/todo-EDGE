@@ -15,7 +15,8 @@ not_started_icon = "🆕"
 doing_icon = "🕗"
 done_icon = "✅"
 
-TOKEN = '1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo'
+# TOKEN = '1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo'
+TOKEN = '1332982455:AAHvLsgv5NG9anh2OdY2o7-66c36rea5wXA'
 
 server = Flask(__name__)
 
@@ -100,7 +101,7 @@ def start_message(message):
     else:
         bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboardByType(NOT_STARTED))
 
-@bot.message_handler(commands=['progres'])
+@bot.message_handler(commands=['progress'])
 def start_message(message):
     if sum(x == DOING for x in tasks.values())==0:
         bot.send_message(message.chat.id, "You don't have any task in progress, go and do them or add new tasks by pressing /")
