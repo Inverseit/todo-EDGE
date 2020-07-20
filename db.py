@@ -5,7 +5,7 @@ DATABASE_URL = os.environ['DATABASE_URL']
 def get_all_tasks(chat_id):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
-    command = """SELECT task, status FROM tasks WHERE chat_id={};""".format(str(chat_id))
+    command = """SELECT task, status FROM tasks WHERE chat_id='{}';""".format(str(chat_id))
     cur.execute(command)
     records = cur.fetchall()
     cur.close()
