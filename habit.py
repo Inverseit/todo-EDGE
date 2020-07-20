@@ -89,21 +89,21 @@ def start_message(message):
 @bot.message_handler(commands=['done'])
 def start_message(message):
     if sum(x == DONE for x in tasks.values())==0:
-        bot.send_message(message.chat.id, "😱 You don't have any finished tasks, go and do them or add new tasks by pressing \\")
+        bot.send_message(message.chat.id, "😱 You don't have any finished tasks, go and do them or add new tasks by pressing /")
     else:
         bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboardByType(DONE))
 
 @bot.message_handler(commands=['new'])
 def start_message(message):
     if sum(x == NOT_STARTED for x in tasks.values())==0:
-        bot.send_message(message.chat.id, "You don't have any new tasks, add new tasks by pressing \\")
+        bot.send_message(message.chat.id, "You don't have any new tasks, add new tasks by pressing /")
     else:
         bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboardByType(NOT_STARTED))
 
 @bot.message_handler(commands=['progres'])
 def start_message(message):
     if sum(x == DOING for x in tasks.values())==0:
-        bot.send_message(message.chat.id, "You don't have any task in progress, go and do them or add new tasks by pressing \\")
+        bot.send_message(message.chat.id, "You don't have any task in progress, go and do them or add new tasks by pressing /")
     else:
         bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboardByType(DOING))
 
