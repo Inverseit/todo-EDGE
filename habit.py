@@ -39,10 +39,10 @@ def start_message(message):
 
 @bot.message_handler(commands=['add'])
 def start_message(message):
-    tasks = db.get_all_tasks(message.chat.id)
     m = bot.send_message(message.chat.id, 'What task do you want to add to your today list?')
     bot.register_next_step_handler(m, process_habit_step)
 def process_habit_step(message):
+    tasks = db.get_all_tasks(message.chat.id)
     bot.send_message(message.chat.id, "Adding '{}' habit to your list.....".format(message.text))
     if message.text not in tasks.keys():
         tasks = db.insert(message.chat.id, message.text, NOT_STARTED)
