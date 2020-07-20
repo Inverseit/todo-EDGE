@@ -3,26 +3,9 @@ import ast
 import time
 from flask import Flask, request
 import psycopg2
+import db
 import telebot
 types = telebot.types
-
-DATABASE_URL = os.environ['DATABASE_URL']
-
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-cur = conn.cursor()
-test_command =  """
-        CREATE TABLE tasks (
-            task_id SERIAL PRIMARY KEY,
-            chat_id VARCHAR(255) NOT NULL,
-            task VARCHAR(255) NOT NULL,
-            status INTEGER  NOT NULL,
-        )
-        """
-cur.execute(test_command)
-cur.close()
-
-conn.commit()
-conn.close()
 
 # used constants
 NOT_STARTED = 0
@@ -46,6 +29,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
+    tasks = db.get_all_tasks(message.chat.id)
     bot.send_message(message.chat.id, "Hey let's get started! Type / to see all availabe commands") # add some text
 
 @bot.message_handler(commands=['help'])
@@ -55,12 +39,13 @@ def start_message(message):
 
 @bot.message_handler(commands=['add'])
 def start_message(message):
+    tasks = db.get_all_tasks(message.chat.id)
     m = bot.send_message(message.chat.id, 'What task do you want to add to your today list?')
     bot.register_next_step_handler(m, process_habit_step)
 def process_habit_step(message):
     bot.send_message(message.chat.id, "Adding '{}' habit to your list.....".format(message.text))
     if message.text not in tasks.keys():
-        tasks[message.text] = NOT_STARTED
+        tasks = db.insert(message.chat.id, message.text, NOT_STARTED)
         bot.send_message(message.chat.id, "Done! We added a new task: '{}'".format(message.text))        
     else:
         m = bot.send_message(message.chat.id, "Sorry, you are already have task called '{}'".format(message.text))
@@ -83,6 +68,7 @@ def makeKeyboard():
 
 @bot.message_handler(commands=['show'])
 def start_message(message):
+    tasks = db.get_all_tasks(message.chat.id)
     if len(tasks.keys())==0:
         bot.send_message(message.chat.id, "😱 You didn't added any tasks, please click to the /add")
     else:
@@ -91,6 +77,7 @@ def start_message(message):
 
 @bot.message_handler(commands=['done'])
 def start_message(message):
+    tasks = db.get_all_tasks(message.chat.id)
     text = "Here is your list of {} \n".format(done_icon)
     added = False
     for key, value in tasks.items():
@@ -105,6 +92,7 @@ def start_message(message):
         
 @bot.message_handler(commands=['new'])
 def start_message(message):
+    tasks = db.get_all_tasks(message.chat.id)
     text = "Here is your list of {} \n".format(not_started_icon)
     added = False
     for key, value in tasks.items():
@@ -119,6 +107,7 @@ def start_message(message):
 
 @bot.message_handler(commands=['progress'])
 def start_message(message):
+    tasks = db.get_all_tasks(message.chat.id)
     text = "Here is your list of {} \n".format(doing_icon)
     added = False
     for key, value in tasks.items():
@@ -135,11 +124,15 @@ def start_message(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_query(call):
+    tasks = db.get_all_tasks(message.chat.id)
     if (call.data.startswith("['key'")):
+        print(call)
         keyFromCallBack = ast.literal_eval(call.data)[1]
         tasks[keyFromCallBack] +=1
         if tasks[keyFromCallBack] > DONE:
             tasks[keyFromCallBack] = DONE
+        new_status = tasks[keyFromCallBack]
+        tasks = db.update(call.from_user.id, keyFromCallBack, new_status)
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,

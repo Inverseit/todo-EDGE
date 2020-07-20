@@ -1,23 +1,54 @@
-import os
 import psycopg2
-
+import os
 DATABASE_URL = os.environ['DATABASE_URL']
 
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-cur = conn.cursor()
-# test_command =  """INSERT INTO tasks (chat_id, task, status) VALUES ('12345', 'nts11', 1);"""
-test_command1 = """SELECT task, status FROM tasks WHERE chat_id='123';"""
-cur.execute(test_command1)
-records = cur.fetchall()
-cur.close()
-tasks = {}
-for s in records:
-    task_name, status  = s
-    tasks[task_name] = status
-for key, value in tasks.items():
-    print("{0} has status {1}".format(key, value))
-conn.commit()
-conn.close()
+def get_all_tasks(chat_id):
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    command = """SELECT task, status FROM tasks WHERE chat_id={};""".format(str(chat_id))
+    cur.execute(command)
+    records = cur.fetchall()
+    cur.close()
+    tasks = {}
+    for s in records:
+        task_name, status  = s
+        tasks[task_name] = status
+    conn.close()
+    return tasks
+
+
+def insert(chat_id, task, status):
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    command_insert = """INSERT INTO tasks (chat_id, task, status)VALUES ('{0}', '{1}', {2},);""".format(str(chat_id), task, status)
+    cur.execute(command_insert)
+    command = """SELECT task, status FROM tasks WHERE chat_id={};""".format(str(chat_id))
+    cur.execute(command)
+    records = cur.fetchall()
+    cur.close()
+    tasks = {}
+    for s in records:
+        task_name, status  = s
+        tasks[task_name] = status
+    conn.close()
+    return tasks
+
+def update(chat_id, task, status):
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    command_update = """UPDATE tasks SET status={0} WHERE chat_id = '{1}' AND task = '{2}');""".format(status, str(chat_id), task)
+    cur.execute(command_insert)
+    command = """SELECT task, status FROM tasks WHERE chat_id={};""".format(str(chat_id))
+    cur.execute(command)
+    records = cur.fetchall()
+    cur.close()
+    tasks = {}
+    for s in records:
+        task_name, status  = s
+        tasks[task_name] = status
+    conn.close()
+    return tasks
+
 
 # CREATE TABLE tasks (
 #     task_id SERIAL PRIMARY KEY,
