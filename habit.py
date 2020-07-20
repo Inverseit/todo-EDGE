@@ -118,11 +118,14 @@ def start_message(message):
 def handle_query(call):
     if (call.data.startswith("['key'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
+        tasks[keyFromCallBack] +=1
+        if tasks[keyFromCallBack] > DONE:
+            tasks[keyFromCallBack] = DONE
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,
                               reply_markup=makeKeyboard(),
-                              parse_mode='HTML')
+                              parse_mode="HTML")
 
     if (call.data.startswith("['del'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
