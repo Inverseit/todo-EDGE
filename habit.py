@@ -62,7 +62,6 @@ def makeKeyboard():
         )
     return markup
 
-
 @bot.message_handler(commands=['show'])
 def start_message(message):
     if len(tasks.keys())==0:
@@ -73,15 +72,45 @@ def start_message(message):
 
 @bot.message_handler(commands=['done'])
 def start_message(message):
-    print("rr")
-
+    text = "Here is your list of {} \n".format(done_icon)
+    added = False
+    for key, value in tasks.items():
+        if value != DONE:
+            continue
+        text +="**{0}**\n".format(key)
+        added = True
+    if not added:
+        bot.send_message(message.chat.id, "You don't have any finished task. Let's do them")
+    else:
+        bot.send_message(message.chat.id, text)
+        
 @bot.message_handler(commands=['new'])
 def start_message(message):
-    print("rr")
+    text = "Here is your list of {} \n".format(not_started_icon)
+    added = False
+    for key, value in tasks.items():
+        if value != NOT_STARTED:
+            continue
+        text +="**{0}**\n".format(key)
+        added = True
+    if not added:
+        bot.send_message(message.chat.id, "You dont have any new tasks. Let's add them")
+    else:
+        bot.send_message(message.chat.id, text)
 
 @bot.message_handler(commands=['progress'])
 def start_message(message):
-    print("rr")
+    text = "Here is your list of {} \n".format(doing_icon)
+    added = False
+    for key, value in tasks.items():
+        if value != DOING:
+            continue
+        text +="**{0}**\n".format(key)
+        added = True
+    if not added:
+        bot.send_message(message.chat.id, "You don't have any current tasks. Let's start them")
+    else:
+        bot.send_message(message.chat.id, text)
 
 
 
@@ -89,10 +118,6 @@ def start_message(message):
 def handle_query(call):
     if (call.data.startswith("['key'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
-        if len(callback_text) ==3:
-            r= makeKeyboard()
-        else:
-            r= makeKeyboardByType(int(callback_text[3]))
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,
@@ -107,25 +132,6 @@ def handle_query(call):
                               message_id=call.message.message_id,
                               reply_markup=makeKeyboard(),
                               parse_mode='HTML')
-
-
-
-@bot.message_handler(content_types=['text'])
-def send_text(message):
-    print(message.text.lower() + " is revieved")
-    if message.text.lower() == 'привет':
-        msg = bot.send_message(message.chat.id, '')
-        bot.register_next_step_handler(msg, process_name_step)
-    elif message.text.lower() == 'пока':
-        bot.send_message(message.chat.id, 'Прощай, создатель')
-def process_name_step(message):
-    bot.send_message(message.chat.id, "До")
-
-
-
-@bot.message_handler(content_types=['photo'])
-def send_text(message):
-    bot.send_message(message.chat.id, 'красиво!')
 
 
 @server.route('/' + TOKEN, methods=['POST'])
