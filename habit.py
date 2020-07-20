@@ -36,13 +36,13 @@ def start_message(message):
 
 @bot.message_handler(commands=['add'])
 def start_message(message):
-    m = bot.send_message(message.chat.id, 'Hello, what task do you want to do today?')
+    m = bot.send_message(message.chat.id, 'What task do you want to add to your today list?')
     bot.register_next_step_handler(m, process_habit_step)
 def process_habit_step(message):
-    bot.send_message(message.chat.id, "Adding '{}' habit to your list".format(message.text))
+    bot.send_message(message.chat.id, "Adding '{}' habit to your list.....".format(message.text))
     if message.text not in tasks.keys():
         tasks[message.text] = NOT_STARTED
-        bot.send_message(message.chat.id, "Done! We added a new task: '{}'".format(message.text))
+        bot.send_message(message.chat.id, "Done! We added a new task: '{}'".format(message.text))        
     else:
         m = bot.send_message(message.chat.id, "Sorry, you are already have task called '{}'".format(message.text))
         bot.register_next_step_handler(m, start_message)
