@@ -131,7 +131,7 @@ def handle_query(call):
                               text="Your tasks",
                               message_id=call.message.message_id,
                               reply_markup=makeKeyboard(),
-                              parse_mode='HTML')
+                              parse_mode="HTML")
 
 
 @server.route('/' + TOKEN, methods=['POST'])
