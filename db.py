@@ -10,7 +10,7 @@ test_command =  """
             task_id SERIAL PRIMARY KEY,
             chat_id VARCHAR(255) NOT NULL,
             task VARCHAR(255) NOT NULL,
-            status INTEGER  NOT NULL,
+            status INTEGER  NOT NULL
         )
         """
 cur.execute(test_command)
