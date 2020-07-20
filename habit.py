@@ -2,8 +2,27 @@ import os
 import ast
 import time
 from flask import Flask, request
+import psycopg2
 import telebot
 types = telebot.types
+
+DATABASE_URL = os.environ['DATABASE_URL']
+
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+cur = conn.cursor()
+test_command =  """
+        CREATE TABLE tasks (
+            task_id SERIAL PRIMARY KEY,
+            chat_id VARCHAR(255) NOT NULL,
+            task VARCHAR(255) NOT NULL,
+            status INTEGER  NOT NULL,
+        )
+        """
+cur.execute(test_command)
+cur.close()
+
+conn.commit()
+conn.close()
 
 # used constants
 NOT_STARTED = 0
