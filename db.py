@@ -8,8 +8,9 @@ cur = conn.cursor()
 # test_command =  """INSERT INTO tasks (chat_id, task, status) VALUES ('123', 'nts', 0);"""
 test_command = """SELECT * FROM tasks;"""
 cur.execute(test_command)
-for row in cursor:
-    print(row)
+records = cur.fetchall()
+for s in records:
+    print(s)
 cur.close()
 
 conn.commit()
