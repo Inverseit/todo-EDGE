@@ -5,8 +5,11 @@ DATABASE_URL = os.environ['DATABASE_URL']
 
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
-test_command =  """INSERT INTO tasks (chat_id, task, status) VALUES ('123', 'nts', 0);"""
+# test_command =  """INSERT INTO tasks (chat_id, task, status) VALUES ('123', 'nts', 0);"""
+test_command = """SELECT * FROM tasks;"""
 cur.execute(test_command)
+for row in cursor:
+    print(row)
 cur.close()
 
 conn.commit()
