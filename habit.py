@@ -27,7 +27,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id, "Hey let's get started! Type / to see availabe commands") # add some text
+    bot.send_message(message.chat.id, "Hey let's get started! Type / to see all availabe commands") # add some text
 
 @bot.message_handler(commands=['help'])
 def start_message(message):
@@ -63,22 +63,6 @@ def makeKeyboard():
     return markup
 
 
-def makeKeyboardByType(status):
-    markup = types.InlineKeyboardMarkup()
-    for key, value in tasks.items():
-        if value != status:
-            continue
-        icon = not_started_icon
-        if value == DOING:
-            icon = doing_icon
-        elif value == DONE:
-            icon = done_icon
-        markup.add(
-            types.InlineKeyboardButton(text=icon+key, callback_data="['key{0}', '{1}']".format(status, key)),
-            types.InlineKeyboardButton(text=crossIcon,callback_data="['del{0}', '{1}']".format(status, key))
-        )
-    return markup
-
 @bot.message_handler(commands=['show'])
 def start_message(message):
     if len(tasks.keys())==0:
@@ -89,24 +73,15 @@ def start_message(message):
 
 @bot.message_handler(commands=['done'])
 def start_message(message):
-    if sum(x == DONE for x in tasks.values())==0:
-        bot.send_message(message.chat.id, "😱 You don't have any finished tasks, go and do them or add new tasks by pressing /")
-    else:
-        bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboardByType(DONE))
+    print("rr")
 
 @bot.message_handler(commands=['new'])
 def start_message(message):
-    if sum(x == NOT_STARTED for x in tasks.values())==0:
-        bot.send_message(message.chat.id, "You don't have any new tasks, add new tasks by pressing /")
-    else:
-        bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboardByType(NOT_STARTED))
+    print("rr")
 
 @bot.message_handler(commands=['progress'])
 def start_message(message):
-    if sum(x == DOING for x in tasks.values())==0:
-        bot.send_message(message.chat.id, "You don't have any task in progress, go and do them or add new tasks by pressing /")
-    else:
-        bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboardByType(DOING))
+    print("rr")
 
 
 
@@ -114,10 +89,6 @@ def start_message(message):
 def handle_query(call):
     if (call.data.startswith("['key'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
-        tasks[keyFromCallBack] += 1
-        if tasks[keyFromCallBack] > DONE:
-            tasks[keyFromCallBack] = DONE
-        callback_text = ast.literal_eval(call.data)[0]
         if len(callback_text) ==3:
             r= makeKeyboard()
         else:
@@ -125,21 +96,16 @@ def handle_query(call):
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,
-                              reply_markup=r,
+                              reply_markup=makeKeyboard(),
                               parse_mode='HTML')
 
     if (call.data.startswith("['del'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
         del tasks[keyFromCallBack]
-        callback_text = ast.literal_eval(call.data)[0]
-        if len(callback_text) ==3:
-            r= makeKeyboard()
-        else:
-            r= makeKeyboardByType(int(callback_text[3]))
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,
-                              reply_markup=r,
+                              reply_markup=makeKeyboard(),
                               parse_mode='HTML')
 
 
