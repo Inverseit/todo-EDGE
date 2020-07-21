@@ -141,7 +141,7 @@ def handle_query(call):
 
     if (call.data.startswith("['del'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
-        del tasks[keyFromCallBack]
+        db.delete(call.from_user.id, keyFromCallBack)
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,
