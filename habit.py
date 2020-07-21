@@ -145,7 +145,7 @@ def handle_query(call):
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,
-                              reply_markup=makeKeyboard(),
+                              reply_markup=makeKeyboard(tasks),
                               parse_mode="HTML")
 
 
