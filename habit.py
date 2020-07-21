@@ -126,18 +126,18 @@ def start_message(message):
 def handle_query(call):
     tasks = db.get_all_tasks(call.from_user.id)
     if (call.data.startswith("['key'")):
-        print(call)
         keyFromCallBack = ast.literal_eval(call.data)[1]
         tasks[keyFromCallBack] +=1
         if tasks[keyFromCallBack] > DONE:
             tasks[keyFromCallBack] = DONE
-        new_status = tasks[keyFromCallBack]
-        tasks = db.update(call.from_user.id, keyFromCallBack, new_status)
-        bot.edit_message_text(chat_id=call.message.chat.id,
-                              text="Your tasks",
-                              message_id=call.message.message_id,
-                              reply_markup=makeKeyboard(tasks),
-                              parse_mode="HTML")
+        else:
+            new_status = tasks[keyFromCallBack]
+            tasks = db.update(call.from_user.id, keyFromCallBack, new_status)
+            bot.edit_message_text(chat_id=call.message.chat.id,
+                                text="Your tasks",
+                                message_id=call.message.message_id,
+                                reply_markup=makeKeyboard(tasks),
+                                parse_mode="HTML")
 
     if (call.data.startswith("['del'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
