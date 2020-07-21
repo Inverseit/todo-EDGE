@@ -3,6 +3,7 @@ import os
 DATABASE_URL = os.environ['DATABASE_URL']
 
 def get_all_tasks(chat_id):
+    print("called all with "+str(chat_id))
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
     command = """SELECT task, status FROM tasks WHERE chat_id='{}';""".format(str(chat_id))
@@ -21,6 +22,7 @@ def insert(chat_id, task, status):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
     command_insert = """INSERT INTO tasks (chat_id, task, status) VALUES ('{0}', '{1}', {2});""".format(str(chat_id), task, status)
+    print(command_insert)
     cur.execute(command_insert)
     command = """SELECT task, status FROM tasks WHERE chat_id='{}';""".format(str(chat_id))
     cur.execute(command)
