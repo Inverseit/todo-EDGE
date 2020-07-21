@@ -107,7 +107,7 @@ def start_message(message):
 
 @bot.message_handler(commands=['progress'])
 def start_message(message):
-    tasks = db.get_all_tasks(message.chat.id)
+    tasks = db.get_all_tasks(call.from_user.id)
     text = "Here is your list of {} \n".format(doing_icon)
     added = False
     for key, value in tasks.items():
@@ -124,7 +124,7 @@ def start_message(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_query(call):
-    tasks = db.get_all_tasks(message.chat.id)
+    tasks = db.get_all_tasks(call.from_user.id)
     if (call.data.startswith("['key'")):
         print(call)
         keyFromCallBack = ast.literal_eval(call.data)[1]
