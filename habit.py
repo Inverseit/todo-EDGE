@@ -107,7 +107,7 @@ def start_message(message):
 
 @bot.message_handler(commands=['progress'])
 def start_message(message):
-    tasks = db.get_all_tasks(call.from_user.id)
+    tasks = db.get_all_tasks(message.chat.id)
     text = "Here is your list of {} \n".format(doing_icon)
     added = False
     for key, value in tasks.items():
@@ -136,7 +136,7 @@ def handle_query(call):
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,
-                              reply_markup=makeKeyboard(),
+                              reply_markup=makeKeyboard(tasks),
                               parse_mode="HTML")
 
     if (call.data.startswith("['del'")):
@@ -145,7 +145,7 @@ def handle_query(call):
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,
-                              reply_markup=makeKeyboard(),
+                              reply_markup=makeKeyboard(tasks),
                               parse_mode="HTML")
 
 
