@@ -52,7 +52,7 @@ def process_habit_step(message):
         bot.register_next_step_handler(m, start_message)
 
 
-def makeKeyboard():
+def makeKeyboard(tasks):
     markup = types.InlineKeyboardMarkup()
     for key, value in tasks.items():
         icon = not_started_icon
@@ -72,7 +72,7 @@ def start_message(message):
     if len(tasks.keys())==0:
         bot.send_message(message.chat.id, "😱 You didn't added any tasks, please click to the /add")
     else:
-        bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboard())
+        bot.send_message(message.chat.id, "Here you are!",reply_markup=makeKeyboard(tasks))
 
 
 @bot.message_handler(commands=['done'])
@@ -88,7 +88,7 @@ def start_message(message):
     if not added:
         bot.send_message(message.chat.id, "You don't have any finished task. Let's do them")
     else:
-        bot.send_message(message.chat.id, text)
+        bot.send_message(message.chat.id, text,parse_mode="Markdown")
         
 @bot.message_handler(commands=['new'])
 def start_message(message):
@@ -103,7 +103,7 @@ def start_message(message):
     if not added:
         bot.send_message(message.chat.id, "You dont have any new tasks. Let's add them")
     else:
-        bot.send_message(message.chat.id, text)
+        bot.send_message(message.chat.id, text,parse_mode="Markdown")
 
 @bot.message_handler(commands=['progress'])
 def start_message(message):
@@ -118,7 +118,7 @@ def start_message(message):
     if not added:
         bot.send_message(message.chat.id, "You don't have any current tasks. Let's start them")
     else:
-        bot.send_message(message.chat.id, text)
+        bot.send_message(message.chat.id, text,parse_mode="Markdown")
 
 
 
