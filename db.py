@@ -1,7 +1,6 @@
 import psycopg2
 import os
 DATABASE_URL = os.environ['DATABASE_URL']
-
 def get_all_tasks(chat_id):
     print("called all with "+str(chat_id))
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -22,8 +21,8 @@ def insert(chat_id, task, status):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
     command_insert = """INSERT INTO tasks (chat_id, task, status) VALUES ('{0}', '{1}', {2});""".format(str(chat_id), task, status)
-    print(command_insert)
     cur.execute(command_insert)
+    conn.commit()
     command = """SELECT task, status FROM tasks WHERE chat_id='{}';""".format(str(chat_id))
     cur.execute(command)
     records = cur.fetchall()
@@ -38,8 +37,9 @@ def insert(chat_id, task, status):
 def update(chat_id, task, status):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
-    command_update = """UPDATE tasks SET status={0} WHERE chat_id = '{1}' AND task = '{2}');""".format(status, str(chat_id), task)
-    cur.execute(command_insert)
+    command_update = """UPDATE tasks SET status={0} WHERE chat_id = '{1}' AND task = '{2}';""".format(status, str(chat_id), task)
+    cur.execute(command_update)
+    conn.commit()
     command = """SELECT task, status FROM tasks WHERE chat_id='{}';""".format(str(chat_id))
     cur.execute(command)
     records = cur.fetchall()
@@ -51,11 +51,12 @@ def update(chat_id, task, status):
     conn.close()
     return tasks
 
-def delete(chat_id, task, status):
+def delete(chat_id, task):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
-    command_update = """UPDATE tasks SET status={0} WHERE chat_id = '{1}' AND task = '{2}');""".format(status, str(chat_id), task)
-    cur.execute(command_insert)
+    command_del = """DELETE FROM tasks WHERE chat_id = '{0}' AND task = '{1}';""".format(str(chat_id), task)
+    cur.execute(command_del)
+    conn.commit()
     command = """SELECT task, status FROM tasks WHERE chat_id='{}';""".format(str(chat_id))
     cur.execute(command)
     records = cur.fetchall()
