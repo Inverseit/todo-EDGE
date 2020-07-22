@@ -2,10 +2,6 @@ import psycopg2
 import os
 DATABASE_URL = os.environ['DATABASE_URL']
 
-ALL = 0
-DEL = 1
-INS = 2
-UPD = 3
 
 def query(query, chat_id, task, status):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
