@@ -11,25 +11,23 @@ types = telebot.types
 NOT_STARTED = 0
 DOING = 1
 DONE  = 2
-
 crossIcon =  "❌"
 not_started_icon = "🆕"
 doing_icon = "🕗"
 done_icon = "✅"
-
-# TOKEN = '1125338216:AAFCOL_6RJYDPaSNNJEd3QAazK8yPUlNFDo'
 TOKEN = '1332982455:AAHvLsgv5NG9anh2OdY2o7-66c36rea5wXA'
+ALL = 0
+DEL = 1
+INS = 2
+UPD = 3
 
 server = Flask(__name__)
-
 tasks = {}
-
 bot = telebot.TeleBot(TOKEN)
-
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    tasks = db.get_all_tasks(message.chat.id)
+    tasks = db.query(ALL, message.chat.id, None, None)
     bot.send_message(message.chat.id, "Hey let's get started! Type / to see all availabe commands") # add some text
 
 @bot.message_handler(commands=['help'])
@@ -42,10 +40,10 @@ def start_message(message):
     m = bot.send_message(message.chat.id, 'What task do you want to add to your today list?')
     bot.register_next_step_handler(m, process_habit_step)
 def process_habit_step(message):
-    tasks = db.get_all_tasks(message.chat.id)
+    tasks = db.query(ALL, message.chat.id, None, None)
     bot.send_message(message.chat.id, "Adding '{}' habit to your list.....".format(message.text))
     if message.text not in tasks.keys():
-        tasks = db.insert(message.chat.id, message.text, NOT_STARTED)
+        tasks = db.query(INS,message.chat.id, message.text, NOT_STARTED)
         bot.send_message(message.chat.id, "Done! We added a new task: '{}'".format(message.text))        
     else:
         m = bot.send_message(message.chat.id, "Sorry, you are already have task called '{}'".format(message.text))
@@ -68,7 +66,7 @@ def makeKeyboard(tasks):
 
 @bot.message_handler(commands=['show'])
 def start_message(message):
-    tasks = db.get_all_tasks(message.chat.id)
+    tasks = db.query(ALL, message.chat.id, None, None)
     if len(tasks.keys())==0:
         bot.send_message(message.chat.id, "😱 You didn't added any tasks, please click to the /add")
     else:
@@ -77,7 +75,7 @@ def start_message(message):
 
 @bot.message_handler(commands=['done'])
 def start_message(message):
-    tasks = db.get_all_tasks(message.chat.id)
+    tasks = db.query(ALL, message.chat.id, None, None)
     text = "Here is your list of {} \n".format(done_icon)
     added = False
     for key, value in tasks.items():
@@ -92,7 +90,7 @@ def start_message(message):
         
 @bot.message_handler(commands=['new'])
 def start_message(message):
-    tasks = db.get_all_tasks(message.chat.id)
+    tasks = db.query(ALL, message.chat.id, None, None)
     text = "Here is your list of {} \n".format(not_started_icon)
     added = False
     for key, value in tasks.items():
@@ -107,7 +105,7 @@ def start_message(message):
 
 @bot.message_handler(commands=['progress'])
 def start_message(message):
-    tasks = db.get_all_tasks(message.chat.id)
+    tasks = db.query(ALL, message.chat.id, None, None)
     text = "Here is your list of {} \n".format(doing_icon)
     added = False
     for key, value in tasks.items():
@@ -124,7 +122,7 @@ def start_message(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_query(call):
-    tasks = db.get_all_tasks(call.from_user.id)
+    tasks = db.query(ALL, call.from_user.id, None, None)
     if (call.data.startswith("['key'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
         tasks[keyFromCallBack] +=1
@@ -132,7 +130,7 @@ def handle_query(call):
             tasks[keyFromCallBack] = DONE
         else:
             new_status = tasks[keyFromCallBack]
-            tasks = db.update(call.from_user.id, keyFromCallBack, new_status)
+            tasks = db.query(UPD,call.from_user.id, keyFromCallBack, new_status)
             bot.edit_message_text(chat_id=call.message.chat.id,
                                 text="Your tasks",
                                 message_id=call.message.message_id,
@@ -141,7 +139,7 @@ def handle_query(call):
 
     if (call.data.startswith("['del'")):
         keyFromCallBack = ast.literal_eval(call.data)[1]
-        tasks = db.delete(call.from_user.id, keyFromCallBack)
+        tasks = db.query(DEL, call.from_user.id, keyFromCallBack, None)
         bot.edit_message_text(chat_id=call.message.chat.id,
                               text="Your tasks",
                               message_id=call.message.message_id,
